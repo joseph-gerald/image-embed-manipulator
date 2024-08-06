@@ -8,8 +8,10 @@ router.get('/robots.txt', apiController.getRobots);
 router.get('/robots.min.txt', apiController.getRobotsMinified);
 
 // api logic
-router.post('/api/v1/query', apiController.query);
-router.post('/api/v1/ping', apiController.ping);
+router.post('/api/upload', apiController.uploadImage);
+router.post('/api/publish', apiController.publish);
+
+router.get('/view/:id', apiController.viewImage);
 
 router.use((req, res, next) => {
     if (req.method === 'GET') {

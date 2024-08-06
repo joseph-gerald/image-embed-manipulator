@@ -1,12 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/index.css">
-    <title>Hello World</title>
+    <title>DIEM - Discord Image Embed Manipulator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/assets/logo.png" />
+
+    <link rel="stylesheet" href="style/effects.css">
+    <link rel="stylesheet" href="global.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="tailwind.config.js"></script>
+    <script defer src="script.js"></script>
 </head>
-<body>
-    Hello
+
+<body class="font-body bg-background text-text flex justify-center items-center h-screen">
+    <div class="decorations overflow-x-hidden w-screen h-screen absolute top-0 left-1/2 -translate-x-1/2 select-none">
+        <h1
+            class="text-[300px] font-semibold absolute text-[#FFFFFF08] absolute top-1/2 -translate-y-[calc(50%+150px)] -translate-x-1/2 left-1/2">
+            DIEM</h1>
+        <h1
+            class="text-[300px] font-semibold absolute text-[#FFFFFF08] absolute top-1/2 -translate-y-[calc(50%-150px)] -translate-x-1/2 left-1/2">
+            DIEM</h1>
+    </div>
+
+    <div class="flex flex-col gap-4 z-10 p-4 w-full max-w-[900px]">
+        <div class="flex justify-between">
+            <div>
+                <p class="text-lg">
+                    Discord Image Embed Manipulator
+                </p>
+                <small class="opacity-65">Just follow the instructions to the right</small>
+            </div>
+    
+            <div class="text-right -mt-1">
+                <span class="text-md opacity-65 text-primary lowercase">select an image for:</span>
+                <h1 class="text-2xl font-medium uppercase"><small class="font-light text-sm" id="image-stage">1/3</small> <span id="image-purpose">Blur</span></h1>
+            </div>
+        </div>
+
+        <div id="drop-zone" class="">
+            <input type="file" id="file-input" class="hidden">
+            <div class="bg-[#00000050] p-3 rounded-lg backdrop-blur-md">
+                <div id="drop-zone-content" class="border-2 border-dashed border-[#FFFFFF30] rounded-md
+                flex flex-col justify-center items-center p-4 py-8">
+                    <svg fill="#e9e7f4" width="200px" height="200px" viewBox="0 0 32 32" version="1.1"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <title>upload-cloud</title>
+                        <path
+                            d="M0 16v-1.984q0-3.328 2.336-5.664t5.664-2.336q1.024 0 2.176 0.352 0.576-2.752 2.784-4.544t5.056-1.824q3.296 0 5.632 2.368t2.368 5.632q0 0.896-0.32 2.048 0.224-0.032 0.32-0.032 2.464 0 4.224 1.76t1.76 4.224v2.016q0 2.496-1.76 4.224t-4.224 1.76h-0.384q0.288-0.8 0.352-1.44 0.096-1.312-0.32-2.56t-1.408-2.208l-4-4q-1.76-1.792-4.256-1.792t-4.224 1.76l-4 4q-0.96 0.96-1.408 2.24t-0.32 2.592q0.032 0.576 0.256 1.248-2.72-0.608-4.512-2.784t-1.792-5.056zM10.016 22.208q-0.096-0.96 0.576-1.6l4-4q0.608-0.608 1.408-0.608 0.832 0 1.408 0.608l4 4q0.672 0.64 0.608 1.6-0.032 0.288-0.16 0.576-0.224 0.544-0.736 0.896t-1.12 0.32h-1.984v6.016q0 0.832-0.608 1.408t-1.408 0.576-1.408-0.576-0.576-1.408v-6.016h-2.016q-0.608 0-1.088-0.32t-0.768-0.896q-0.096-0.288-0.128-0.576z" />
+                    </svg>
+
+                    <h3 class="text-3xl font-semibold text-center max-w-[400px] mt-6">
+                        Drag and drop or <a href="#" class="underline decoration-accent text-primary">upload</a>
+                        your image
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-container"
+        class="left-0 top-0 w-screen h-screen fixed backdrop-blur-md z-30 flex justify-center backdrop-saturate-50 backdrop-brightness-75 items-center bg-[#00000070] duration-500 hidden">
+        <div id="modal"
+            class="bg-[#20202060] backdrop-blur-lg  p-6 pb-5 rounded-xl border border-[#00000050] w-full max-w-[400px] duration-300 text-white flex justify-between items-center">
+
+        </div>
+    </div>
 </body>
+<script>
+    async function navigateTo(path) {
+        window.onload = null;
+        const html = await fetch(path).then(res => res.text());
+        document.body.innerHTML = html;
+        const newDom = document.createElement('html');
+        newDom.innerHTML = html;
+
+        history.pushState({}, '', path);
+
+        const scripts = Array.from(newDom.querySelectorAll('script'));
+
+        for (const script of scripts) {
+            if (script.src) {
+                const src = new URL(script.src);
+
+                const code = await fetch(src).then(res => res.text());
+
+                setTimeout(() => {
+                    try {
+                        eval(code);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }, 25);
+            } else {
+                try {
+                    eval(script.innerHTML);
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        if (window.onload) window.onload();
+    }
+
+    const link = document.querySelector('a');
+
+    link.addEventListener('click', e => {
+        e.stopPropagation();
+        e.preventDefault();
+        navigateTo(link.href);
+    });
+</script>
+
 </html>
